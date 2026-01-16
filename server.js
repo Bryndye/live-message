@@ -17,11 +17,15 @@ app.use(express.static(__dirname));
 
 // Pour envoyer un message à tous les clients
 function sendMessageToAll(socket, message) {
-  console.log("user name:", users);
-  console.log("user name:", users.get(socket.id));
-  console.log("user name:", users.get(socket.id).name);
-  const userName = users.get(socket.id).name;
-  io.emit(Events.MESSAGE, userName + ": " + message);
+  try{
+    messageEscaped = escapeHtml(message);
+    const user = users.get(socket.id);
+    console.log("Users", users);
+    console.log("Sending message to all from user:", user);
+    io.emit(Events.MESSAGE, user.name + ": " + messageEscaped);
+  }  catch(err){
+    console.error("Error sending message to all:", err);
+  }
 }
 
 // ASTUCES
@@ -33,20 +37,16 @@ function sendMessageToAll(socket, message) {
 
 function escapeHtml(str) {
   return String(str)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-}
-// const safe = escapeHtml(userInput);
+    .replace(/<script>/g, "")
+    .replace(/<\/script>/g, "")
+    .replace(/<link>/g, "")
+    .replace(/<\/link>/g, "")}
 
 io.on(Events.CONNECT, (socket) => {
   console.log("client connecté", socket.id);
 
   socket.on(Events.MESSAGE, (msg) => {
-    console.log("reçu:", msg);
-
+    console.log("reçu:", socket.id, msg);
     sendMessageToAll(socket, msg);
   });
 

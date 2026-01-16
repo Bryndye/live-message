@@ -1,123 +1,127 @@
 <!doctype html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <style>
-      input {
-        border: none !important;
-        outline: none !important;
-        box-shadow: none !important;
-      }
-      .bg-color-chat{
-        background-color: #303030;
-      }
-    </style>
-  </head>
-  <body class="bg-dark">
-    <div id="container-form-user-id" style="min-height: 100vh;">
-      <form id="form-user-id" class="text-white d-flex justify-content-center align-items-center" style="min-height: 100vh;">
-        <div class="col-12 d-flex justify-content-center align-items-center">
-          <input id="user-id" placeholder="Entrez votre identifiant..." class="w-75 border-0 outline-none bg-color-chat text-white"/>
-          <button id="send-user-id" class="btn text-white"><i class="fa-solid fa-paper-plane"></i></button>
-        </div>
-      </form>
+
+<head>
+  <meta charset="utf-8" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+    integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="/style.css" />
+  <title>Live Message</title>
+  <link rel="icon" type="image/png" href="/favicon.ico" />
+</head>
+
+<body class="bg-dark">
+  <div id="container-form-user-id" style="min-height: 100vh;">
+    <form id="form-user-id" class="text-white d-flex justify-content-center align-items-center"
+      style="min-height: 100vh;">
+      <div class="col-12 d-flex justify-content-center align-items-center">
+        <input id="user-id" placeholder="Entrez votre identifiant..."
+          class="w-75 border-0 outline-none bg-color-chat text-white" />
+        <button id="send-user-id" class="btn text-white"><i class="fa-solid fa-paper-plane"></i></button>
+      </div>
+    </form>
+  </div>
+
+  <div id="chat">
+    <div id="chat-logs" class="container w-100" style="min-height: 100vh;">
+      <pre id="log" class="text-white"></pre>
+      <div id="anchor-bottom" style="height: 10vh;"></div>
     </div>
 
-    <div id="chat">
-      <div id="chat-logs" class="container w-100" style="min-height: 100vh;">
-        <pre id="log" class="text-white"></pre>
-        <div id="anchor-bottom" style="height: 10vh;"></div>
-      </div>
-  
-      <div id="chat-bottom" class="container fixed-bottom w-100 d-flex justify-content-center align-items-center" style="min-height: 10vh;">
-        <div class="rowp-3 rounded-3 bg-color-chat" style="width: 80%;">
-          <form id="noReloadForm">
-            <div class="col-12 d-flex justify-content-center align-items-center">
-              <input id="msg" placeholder="Taper votre message..." class="w-75 border-0 outline-none bg-color-chat text-white"/>
-              <button id="send" class="btn text-white"><i class="fa-solid fa-paper-plane"></i></button>
-            </div>
-          </form>
-        </div>
+    <div id="chat-bottom" class="container fixed-bottom w-100 d-flex justify-content-center align-items-center"
+      style="min-height: 10vh;">
+      <div class="rowp-3 rounded-3 bg-color-chat" style="width: 80%;">
+        <form id="noReloadForm">
+          <div class="col-12 d-flex justify-content-center align-items-center">
+            <input id="msg" placeholder="Taper votre message..."
+              class="w-75 border-0 outline-none bg-color-chat text-white" />
+            <button id="send" class="btn text-white"><i class="fa-solid fa-paper-plane"></i></button>
+          </div>
+        </form>
       </div>
     </div>
+  </div>
 
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="/enums.js"></script>
-    <script src="/user.js"></script>
-    <script>
-      const log = (m) => (document.getElementById("log").textContent += m + "\n");
-      const socket = io();
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/enums.js"></script>
+  <script src="/user.js"></script>
+  <script>
+    const log = (m) => (document.getElementById("log").innerHTML += m + "\n");
+    const socket = io();
+    let user = null;
 
-      socket.on(Events.CONNECT, () => {
-        log("Vous êtes connectés");
-        user = null;
-        checkUser();
-      });
-      socket.on(Events.MESSAGE, (m) => {
-        dateNow = new Date().toLocaleTimeString();
-        log(dateNow + " " + m);
-        console.log(m);
-      });
-      socket.on(Events.USER_CONNECTED, (m) => {
-        log(m);
-        console.log(m);
-      });
-      socket.on(Events.USER_DISCONNECTED, () => {
-        log("déconnecté");
-        user = null;
-        checkUser();
-      });
+    socket.on(Events.CONNECT, () => {
+      log("Vous êtes connectés");
+      user = User.getUser(socket.id);
+      socket.emit(Events.USER_ID, user);
+      checkUser();
+    });
+    socket.on(Events.MESSAGE, (m) => {
+      dateNow = new Date().toLocaleTimeString();
+      log(dateNow + " " + m);
+      console.log(m);
+    });
+    socket.on(Events.USER_CONNECTED, (m) => {
+      log(m);
+      console.log(m);
+    });
+    socket.on(Events.USER_DISCONNECTED, () => {
+      log("déconnecté");
+      user = null;
+      checkUser();
+    });
 
-      const containerFormUserId = document.getElementById("container-form-user-id");
-      const chat = document.getElementById("chat");
+    const containerFormUserId = document.getElementById("container-form-user-id");
+    const chat = document.getElementById("chat");
 
-      let user = null;
-      // verifier si l'utilisateur a un nom
-      function checkUser() {
-        if (user === null) {
-          containerFormUserId.style.display = "block";
-          chat.style.display = "none";
-        } else {
-          containerFormUserId.style.display = "none";
-          chat.style.display = "block";
-        }
+    // verifier si l'utilisateur a un nom
+    function checkUser() {
+      if (user === null) {
+        containerFormUserId.style.display = "block";
+        chat.style.display = "none";
+      } else {
+        containerFormUserId.style.display = "none";
+        chat.style.display = "block";
       }
+    }
 
-      // Quand on quitte la page, on déconnecte l'utilisateur
-      window.addEventListener("beforeunload", () => {
+    // Quand on quitte la page, on déconnecte l'utilisateur
+    window.addEventListener("beforeunload", () => {
+      socket.emit(Events.USER_DISCONNECTED, user);
+      if (user !== null) {
         socket.emit(Events.USER_DISCONNECTED, user);
-        if (user !== null) {
-          socket.emit(Events.USER_DISCONNECTED, user);
-        }
-      });
-
-      // Pour envoyer un message
-      document.getElementById("send").onclick = () => {
-        const elementMsg = document.getElementById("msg");
-        const msg = document.getElementById("msg").value;
-        socket.emit(Events.MESSAGE, msg);
-        elementMsg.value = "";
-        document.getElementById("anchor-bottom").scrollIntoView({ behavior: "smooth" });
-      };
-
-      // Pour envoyer un message sans recharger la page
-      const froms = document.getElementsByTagName("form");
-      for (const form of froms) {
-        form.addEventListener("submit", (event) => {
-          event.preventDefault();
-          console.log("Form submitted without reloading!");
-        });
       }
+    });
 
-      document.getElementById("send-user-id").onclick = () => {
-        const elementUserId = document.getElementById("user-id");
-        user = new User(socket.id, elementUserId.value);
-        checkUser();
-        socket.emit(Events.USER_ID, user);
-        elementUserId.value = "";
-      };
-    </script>
-  </body>
+    // Pour envoyer un message
+    document.getElementById("send").onclick = () => {
+      const elementMsg = document.getElementById("msg");
+      const msg = document.getElementById("msg").value;
+      socket.emit(Events.MESSAGE, msg);
+      elementMsg.value = "";
+      document.getElementById("anchor-bottom").scrollIntoView({ behavior: "smooth" });
+    };
+
+    // Pour envoyer un message sans recharger la page
+    const froms = document.getElementsByTagName("form");
+    for (const form of froms) {
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+      });
+    }
+
+    document.getElementById("send-user-id").onclick = () => {
+      const elementUserId = document.getElementById("user-id");
+      user = new User(socket.id, elementUserId.value);
+      User.setUser(user);
+      checkUser();
+      socket.emit(Events.USER_ID, user);
+      elementUserId.value = "";
+    };
+  </script>
+</body>
+
 </html>

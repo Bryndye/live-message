@@ -1,0 +1,8 @@
+input {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+.bg-color-chat{
+  background-color: #303030;
+}
