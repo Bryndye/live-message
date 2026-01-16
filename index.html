@@ -19,32 +19,46 @@
     <div id="chat-logs" class="container w-100" style="min-height: 180vh;">
       <pre id="log" class="text-white"></pre>
     </div>
-    
+
     <div id="chat-bottom" class="container fixed-bottom w-100 d-flex justify-content-center align-items-center" style="min-height: 10vh;">
       <div class="rowp-3 rounded-3 bg-color-chat" style="width: 80%;">
-        <div class="col-12 d-flex justify-content-center align-items-center">
-          <input id="msg" placeholder="Taper votre message..." class="w-75 border-0 outline-none bg-color-chat text-white"/>
-          <button id="send" class="btn text-white"><i class="fa-solid fa-paper-plane"></i></button>
-        </div>
+        <form id="noReloadForm">
+          <div class="col-12 d-flex justify-content-center align-items-center">
+            <input id="msg" placeholder="Taper votre message..." class="w-75 border-0 outline-none bg-color-chat text-white"/>
+            <button id="send" class="btn text-white"><i class="fa-solid fa-paper-plane"></i></button>
+          </div>
+        </form>
       </div>
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
+    <script src="/enums.js"></script>
     <script>
       const log = (m) => (document.getElementById("log").textContent += m + "\n");
       const socket = io();
 
       socket.on("connect", () => log("connecté"));
-      socket.on("message", (m) => {
+      socket.on(Events.MESSAGE, (m) => {
         log(m);
         console.log(m);
       });
-      socket.on("disconnect", () => log("déconnecté"));
+      socket.on(Events.USER_CONNECTED, (m) => {
+        log(m);
+        console.log(m);
+      });
+      socket.on(Events.USER_DISCONNECTED, () => log("déconnecté"));
 
       document.getElementById("send").onclick = () => {
+        const elementMsg = document.getElementById("msg");
         const msg = document.getElementById("msg").value;
-        socket.emit("message", socket.id + ": " + msg);
+        socket.emit(Events.MESSAGE, socket.id + ": " + msg);
+        elementMsg.value = "";
       };
+
+      document.getElementById("noReloadForm").addEventListener("submit", (event) => {
+        event.preventDefault();
+        console.log("Form submitted without reloading!");
+      });
     </script>
   </body>
 </html>
