@@ -5,4 +5,9 @@ class User {
   }
 }
 
-module.exports = User;
+if (typeof window !== "undefined") {
+  window.User = User;
+}
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = User;
+}
