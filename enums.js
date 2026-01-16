@@ -6,4 +6,9 @@ const Events = {
     USER_ID: "user:id",
 };
 
-module.exports = { Events };
+if (typeof window !== "undefined") {
+    window.Events = Events;
+}
+if (typeof module !== "undefined" && module.exports) {
+    module.exports = { Events };
+}
