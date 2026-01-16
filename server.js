@@ -1,8 +1,8 @@
 const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
-const { Events } = require("./enums");
-const User = require("./user");
+const { Events } = require("./src/enums");
+const User = require("./src/user");
 
 const app = express();
 const server = http.createServer(app);
@@ -14,14 +14,15 @@ const io = new Server(server);
 const users = new Map();
 
 app.use(express.static(__dirname));
+app.get("/", (req, res) => {
+  res.sendFile(__dirname + "/index.html");
+});
 
 // Pour envoyer un message à tous les clients
 function sendMessageToAll(socket, message) {
   try{
     messageEscaped = escapeHtml(message);
     const user = users.get(socket.id);
-    console.log("Users", users);
-    console.log("Sending message to all from user:", user);
     io.emit(Events.MESSAGE, user.name + ": " + messageEscaped);
   }  catch(err){
     console.error("Error sending message to all:", err);
@@ -65,6 +66,7 @@ io.on(Events.CONNECT, (socket) => {
     console.log("user id:", user);
     users.set(socket.id, user);
     socket.broadcast.emit(Events.USER_CONNECTED, `${user.name} vient de se connecter !`);
+    socket.emit(Events.USER_CONNECTED, `Vous êtes connectés en tant que : ${user.name}`);
   });
 });
 

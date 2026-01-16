@@ -1,8 +1,29 @@
+body {
+  background-color: rgb(33, 37, 41);
+}
+
 input {
   border: none !important;
   outline: none !important;
   box-shadow: none !important;
 }
-.bg-color-chat{
+
+.bg-color-chat {
   background-color: #303030;
 }
+
+#chat-bottom {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#msg {
+  width: 90%;
+}
+
+/* #send {
+  height: 36px;
+  width: 36px;
+} */
