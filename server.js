@@ -53,10 +53,10 @@ io.on(Events.CONNECT, (socket) => {
   socket.on(Events.USER_DISCONNECTED, (user=null) => {
     console.log("client déconnecté", socket.id);
     if (user !== null) {
-      socket.broadcast.emit(Events.USER_DISCONNECTED, `${user.name} vient de se déconnecter !`);
+      socket.broadcast.emit(Events.MESSAGE, `${user.name} vient de se déconnecter !`);
     }
     else {
-      socket.broadcast.emit(Events.USER_DISCONNECTED, `${socket.id} vient de se déconnecter !`);
+      socket.broadcast.emit(Events.MESSAGE, `${socket.id} vient de se déconnecter !`);
     }
     users.delete(socket.id);
   });
