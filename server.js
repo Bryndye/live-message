@@ -56,7 +56,7 @@ io.on(Events.CONNECT, (socket) => {
       socket.broadcast.emit(Events.USER_DISCONNECTED, `${user.name} vient de se déconnecter !`);
     }
     else {
-      socket.broadcast.emit(Events.USER_DISCONNECTED, `${users.get(socket.id).name} vient de se déconnecter !`);
+      socket.broadcast.emit(Events.USER_DISCONNECTED, `${socket.id} vient de se déconnecter !`);
     }
     users.delete(socket.id);
   });
