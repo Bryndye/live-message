@@ -43,13 +43,14 @@ server.on("error", (err) => {
 });
 // #endregion
 
-const io = new Server(server, {
-  cors: {
-    origin: allowedOrigin,
-    methods: ["GET", "POST"],
-    credentials: true,
-  },
-});
+const io = new Server(server);
+// {
+//   cors: {
+//     origin: allowedOrigin,
+//     methods: ["GET", "POST"],
+//     credentials: true,
+//   },
+// }
 
 // #region agent log
 __dbg("server.js:io-init", "io initialized", { corsOrigin: allowedOrigin }, "H2");
