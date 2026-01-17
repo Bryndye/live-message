@@ -17,10 +17,12 @@ const io = new Server(server);
 app.disable("x-powered-by");
 
 app.use(express.static(__dirname));
+
 app.get("/", (req, res) => {
-  res.sendFile(__dirname + "/index.html");
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
+const users = {};
 
 // Pour envoyer un message à tous les clients
 function sendMessageToAll(socket, message) {
