@@ -8,19 +8,20 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
     integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="../style.css" />
   <title>Live Message</title>
-  <link rel="icon" type="image/png" href="/favicon.ico" />
+  <link rel="icon" type="image/png" href="favicon.ico" />
+  <link rel="manifest" href="manifest.json" />
 </head>
 
-<body>
+<body oncontextmenu="return false">
   <main>
     <div id="container-form-user-id" style="min-height: 100vh;">
-      <form id="form-user-id" class="text-white d-flex justify-content-center align-items-center"
+      <form id="form-user-id" class="text-white d-flex justify-content-center align-items-center rounded-3"
         style="min-height: 100vh;">
         <div class="col-12 d-flex justify-content-center align-items-center">
           <input id="user-id" placeholder="Entrez votre identifiant..."
-            class="w-75 border-0 outline-none bg-color-chat text-white" />
+            class="w-50 border-0 outline-none bg-color-chat text-white" />
           <button id="send-user-id" class="btn text-white">
             <i class="fa-solid fa-paper-plane"></i>
           </button>
@@ -43,14 +44,17 @@
           <button id="send" class="btn text-black d-flex justify-content-center align-items-center">
             <i class="fa-solid fa-paper-plane text-white"></i>
           </button>
+          <button id="profileBtn" class="btn text-white d-flex justify-content-center align-items-center">
+            <i class="fa-solid fa-user"></i>
+          </button>
         </form>
       </div>
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
-    <script src="/src/enums.js"></script>
-    <script src="/src/user.js"></script>
-    <script src="/src/main.js"></script>
+    <script src="../src/enums.js"></script>
+    <script src="../src/user.js"></script>
+    <script src="/main.js"></script>
   </main>
 </body>
 

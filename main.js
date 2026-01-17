@@ -1,19 +1,20 @@
-const log = (m) => (document.getElementById("log").innerHTML += m + "\n");
+const logElement = document.getElementById("log");
+const log = (m) => (logElement.innerHTML += m + "\n");
 const socket = io();
 let user = null;
 
 socket.on(Events.CONNECT, () => {
-  log("Vous êtes connectés au serveur de chat.\nAttention aux messages malveillants !");
+  logElement.innerHTML = "";
+  log("Vous êtes connectés au serveur de chat.\nAttention aux messages malveillants !\n");
   connectUser();
 });
 socket.on(Events.MESSAGE, (m) => {
   dateNow = new Date().toLocaleTimeString();
   log(dateNow + " " + m);
-  console.log(m);
+  document.getElementById("anchor-bottom").scrollIntoView({ behavior: "smooth" });
 });
 socket.on(Events.USER_CONNECTED, (m) => {
   log(m);
-  console.log(m);
   checkUser();
 });
 socket.on(Events.USER_DISCONNECTED, () => {
@@ -49,15 +50,15 @@ function checkUser() {
 // Quand on quitte la page, on déconnecte l'utilisateur
 window.addEventListener("beforeunload", () => {
   socket.emit(Events.USER_DISCONNECTED, user);
-  if (user !== null) {
-    socket.emit(Events.USER_DISCONNECTED, user);
-  }
 });
 
 // Pour envoyer un message
 document.getElementById("send").onclick = () => {
   const elementMsg = document.getElementById("msg");
   const msg = document.getElementById("msg").value;
+  if (msg.trim() === "") {
+    return;
+  }
   socket.emit(Events.MESSAGE, msg);
   elementMsg.value = "";
   document.getElementById("anchor-bottom").scrollIntoView({ behavior: "smooth" });
@@ -73,8 +74,19 @@ for (const form of froms) {
 
 document.getElementById("send-user-id").onclick = () => {
   const elementUserId = document.getElementById("user-id");
+  if (elementUserId.value.trim() === "") {
+    alert("Veuillez entrer un nom d'utilisateur.");
+    return;
+  }
   user = new User(socket.id, elementUserId.value);
   User.setUser(user);
   connectUser();
   elementUserId.value = "";
 };
+
+document.getElementById('profileBtn').addEventListener('click', function (e) {
+  e.preventDefault();
+  user = null;
+  User.clearUser();
+  checkUser();
+});

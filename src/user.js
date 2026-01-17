@@ -25,6 +25,10 @@ class User {
     const user = new User(socketId, userParsed.name);
     return user;
   }
+
+  static clearUser() {
+    window.localStorage.removeItem("user");
+  }
 }
 
 // Export for browser
